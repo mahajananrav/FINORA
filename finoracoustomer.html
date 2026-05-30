@@ -1,0 +1,138 @@
+import React, { useState, useEffect } from 'react';
+
+export default function CustomerApp() {
+  const [voucherType, setVoucherType] = useState('SALES');
+  const [items, setItems] = useState([{ name: '', qty: 0, rate: 0 }]);
+  const [narration, setNarration] = useState('');
+  
+  // Free Trial System States
+  const [trialDaysLeft, setTrialDaysLeft] = useState(30);
+  const [selectedPaidPlan, setSelectedPaidPlan] = useState('MONTHLY');
+
+  useEffect(() => {
+    const handleShortcuts = (e) => {
+      if (e.key === 'F5') { e.preventDefault(); setVoucherType('PAYMENT'); }
+      if (e.key === 'F6') { e.preventDefault(); setVoucherType('RECEIPT'); }
+      if (e.key === 'F8') { e.preventDefault(); setVoucherType('SALES'); }
+    };
+    window.addEventListener('keydown', handleShortcuts);
+    return () => window.removeEventListener('keydown', handleShortcuts);
+  }, []);
+
+  const calculateInvoice = () => {
+    let subtotal = items.reduce((sum, item) => sum + (item.qty * item.rate), 0);
+    let cgst = (subtotal * 9) / 100;
+    let sgst = (subtotal * 9) / 100;
+    return { subtotal, cgst, sgst, grandTotal: subtotal + cgst + sgst };
+  };
+
+  // SaaS Commercial Pricing Plan Computation (Excluding 18% GST)
+  const getSaaSPlanFinancials = () => {
+    let basePrice = 799;
+    if (selectedPaidPlan === 'YEARLY') basePrice = 8999;
+    if (selectedPaidPlan === 'LIFETIME') basePrice = 19999;
+    
+    let gstAmount = (basePrice * 18) / 100;
+    return { basePrice, gstAmount, netPayable: basePrice + gstAmount };
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f4f6f7] font-mono text-xs p-4 select-none print:p-0 print:bg-white">
+      {/* Finora Application Main Top Banner */}
+      <div className="bg-[#004d40] text-white p-2.5 flex justify-between items-center font-bold shadow-md print:hidden">
+        <div className="flex items-center space-x-3">
+          <div className="bg-white p-1 rounded font-sans text-[#0146a6] text-sm tracking-tight font-black">
+            Finora <span className="text-emerald-600">Software</span>
+          </div>
+          <span className="text-gray-300">| Client Workspace</span>
+          
+          {/* Trial Period Alert Dynamic Widget */}
+          <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] px-2 py-0.5 rounded font-bold">
+            ⚡ FREE TRIAL: {trialDaysLeft} DAYS REMAINING
+          </span>
+        </div>
+        <div className="flex space-x-2">
+          <span className={`px-2 py-0.5 rounded text-[10px] ${voucherType === 'PAYMENT' ? 'bg-yellow-500 text-black' : 'bg-[#00796b]'}`}>[F5] Payment</span>
+          <span className={`px-2 py-0.5 rounded text-[10px] ${voucherType === 'RECEIPT' ? 'bg-yellow-500 text-black' : 'bg-[#00796b]'}`}>[F6] Receipt</span>
+          <span className={`px-2 py-0.5 rounded text-[10px] ${voucherType === 'SALES' ? 'bg-yellow-500 text-black' : 'bg-[#00796b]'}`}>[F8] Sales</span>
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-4 gap-4 print:mt-0 print:block">
+        {/* Main Work Desk Core */}
+        <div className="col-span-3 bg-white border-2 border-[#004d40] p-4 shadow-sm min-h-[500px] flex flex-col justify-between print:border-black print:shadow-none">
+          <div>
+            <div className="flex justify-between border-b-2 border-black pb-2 mb-4">
+              <div>
+                <h2 className="text-sm font-bold text-[#004d40] uppercase">Voucher Data Entry Ledger</h2>
+              </div>
+              <div className="text-right font-bold">
+                <div>Mode: <span className="text-red-700 underline">{voucherType}</span></div>
+                <div>Voucher No: <span className="bg-gray-100 px-2 py-0.5 border">FIN-2026-088</span></div>
+              </div>
+            </div>
+
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-[#e0f2f1] text-[#004d40] font-bold border-b-2 border-black">
+                  <th className="p-2 w-12 border-r border-gray-300">S.No</th>
+                  <th className="p-2 border-r border-gray-300">Description / Stock Ledgers</th>
+                  <th className="p-2 text-right w-24 border-r border-gray-300">Qty</th>
+                  <th className="p-2 text-right w-24 border-r border-gray-300">Rate (₹)</th>
+                  <th className="p-2 text-right w-32">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((item, index) => (
+                  <tr key={index} className="border-b border-gray-200">
+                    <td className="p-2 text-center">{index + 1}</td>
+                    <td className="p-1 border-r border-gray-200">
+                      <input className="w-full p-1 focus:bg-yellow-50 focus:outline-none font-bold" placeholder="Asset category line item..." value={item.name} onChange={e => { let n = [...items]; n[index].name = e.target.value; setItems(n); }} />
+                    </td>
+                    <td className="p-1 border-r border-gray-200"><input type="number" className="w-full p-1 text-right focus:bg-yellow-50" value={item.qty} onChange={e => { let n = [...items]; n[index].qty = parseFloat(e.target.value) || 0; setItems(n); }} /></td>
+                    <td className="p-1 border-r border-gray-200"><input type="number" className="w-full p-1 text-right focus:bg-yellow-50" value={item.rate} onChange={e => { let n = [...items]; n[index].rate = parseFloat(e.target.value) || 0; setItems(n); }} /></td>
+                    <td className="p-2 text-right font-bold">₹{(item.qty * item.rate).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="border-t-2 border-black pt-2 bg-gray-50 p-3 rounded mt-4">
+            <div className="flex justify-between font-bold"><span>Subtotal:</span><span>₹{calculateInvoice().subtotal.toFixed(2)}</span></div>
+            <div className="flex justify-between text-gray-600 text-[10px]"><span>CGST @ 9%:</span><span>₹{calculateInvoice().cgst.toFixed(2)}</span></div>
+            <div className="flex justify-between text-gray-600 text-[10px] border-b pb-1"><span>SGST @ 9%:</span><span>₹{calculateInvoice().sgst.toFixed(2)}</span></div>
+            <div className="flex justify-between font-black text-sm text-[#004d40] pt-2"><span>Total Net Balance:</span><span>₹{calculateInvoice().grandTotal.toFixed(2)}</span></div>
+          </div>
+        </div>
+
+        {/* Commercial Premium Finora Software Upgrades Panel Module */}
+        <div className="bg-[#cfd8dc] border border-gray-400 p-2 space-y-3 rounded shadow-md print:hidden">
+          <div className="bg-[#0146a6] text-white p-1.5 text-center font-bold uppercase text-[10px] tracking-wider rounded-sm">
+            👑 Finora License Upgrades
+          </div>
+          
+          <div className="space-y-1 text-[11px]">
+            <label className="block font-bold text-gray-700">Select Commercial Tier:</label>
+            <select className="w-full p-1.5 bg-white border border-gray-400 font-bold" value={selectedPaidPlan} onChange={e => setSelectedPaidPlan(e.target.value)}>
+              <option value="MONTHLY">Monthly Plan @ ₹799</option>
+              <option value="YEARLY">Yearly Plan @ ₹8,999</option>
+              <option value="LIFETIME">Lifetime License @ ₹19,999</option>
+            </select>
+          </div>
+
+          {/* Real-time SaaS Invoice Calculation Excluding GST */}
+          <div className="bg-white p-2 rounded border border-gray-300 font-sans text-[11px] space-y-1 shadow-sm">
+            <div className="flex justify-between text-gray-600"><span>Base Fare:</span><span className="font-mono font-bold">₹{getSaaSPlanFinancials().basePrice.toFixed(2)}</span></div>
+            <div className="flex justify-between text-gray-500 text-[10px]"><span>Add Extra 18% GST:</span><span className="font-mono">₹{getSaaSPlanFinancials().gstAmount.toFixed(2)}</span></div>
+            <div className="border-t pt-1 flex justify-between font-bold text-blue-900 text-xs"><span>Total Invoice:</span><span className="font-mono">₹{getSaaSPlanFinancials().netPayable.toFixed(2)}</span></div>
+          </div>
+
+          <button className="w-full bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-2 font-bold uppercase rounded hover:opacity-90 shadow" onClick={() => alert(`Redirecting to payment gateway node for full commercial deployment of ${selectedPaidPlan} package.`)}>
+            Unlock Full Version Now
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
