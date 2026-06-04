@@ -1,43 +1,799 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finora Compliance - India's Trusted Compliance Partner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #004B93;
+            --light-blue: #00A3E0;
+            --amber: #FFB300;
+            --dark-navy: #0A192F;
+            --gray-bg: #F4F7FA;
+            --white: #FFFFFF;
+            --border-color: #E2E8F0;
+            --success: #2ECC71;
+        }
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+        body {
+            background-color: var(--gray-bg);
+            color: var(--dark-navy);
+            overflow-x: hidden;
+        }
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+        /* Header Style */
+        header {
+            background-color: var(--white);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+        }
 
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+        .logo-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            letter-spacing: 1px;
+        }
+        .logo-title span { color: var(--light-blue); }
+        .logo-title offset { font-family: monospace; font-weight: 300; font-size: 14px; vertical-align: super;}
+
+        .tagline {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--dark-navy);
+            margin-top: -2px;
+        }
+        .tagline span { color: var(--light-blue); }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-primary { background-color: var(--primary-blue); color: var(--white); }
+        .btn-primary:hover { background-color: var(--dark-navy); }
+        .btn-admin { background-color: var(--amber); color: var(--dark-navy); }
+        .btn-admin:hover { opacity: 0.9; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); }
+
+        /* Main Layout Containers */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Auth Section */
+        .auth-card {
+            background: var(--white);
+            max-width: 450px;
+            margin: 60px auto;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .auth-card h2 { margin-bottom: 20px; font-size: 24px; text-align: center; }
+
+        .tab-system {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #718096;
+        }
+
+        .tab.active {
+            color: var(--primary-blue);
+            border-bottom: 3px solid var(--primary-blue);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-control:focus { border-color: var(--light-blue); }
+
+        .password-hint {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* Dashboard & Grid styling */
+        .client-info-bar {
+            background: var(--dark-navy);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .service-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+            border-color: var(--light-blue);
+        }
+
+        .service-card h3 { font-size: 18px; margin-bottom: 15px; color: var(--primary-blue); }
+        
+        .price-tag {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark-navy);
+            margin-bottom: 20px;
+        }
+        .price-tag span { font-size: 12px; color: #718096; font-weight: 400; }
+
+        /* Dynamic Workflow Forms */
+        .form-container-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .form-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Camera UI elements */
+        .camera-box {
+            background: #E2E8F0;
+            border: 2px dashed #CBD5E1;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .video-preview {
+            width: 100%;
+            max-width: 240px;
+            height: 180px;
+            background: #000;
+            margin: 10px auto;
+            border-radius: 6px;
+            display: block;
+            object-fit: cover;
+        }
+
+        .captured-image {
+            width: 100%;
+            max-width: 240px;
+            height: 180px;
+            margin: 10px auto;
+            border-radius: 6px;
+            display: none;
+            object-fit: cover;
+            border: 3px solid var(--success);
+        }
+
+        /* Admin Dashboard Modal Window */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 25, 47, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 35px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        /* Admin Layout Panel */
+        .admin-panel {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .admin-table th, .admin-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .admin-table th { background-color: var(--gray-bg); font-weight: 600; }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #E2E8F0;
+        }
+        .badge-success { background: #D1FAE5; color: #065F46; }
+
+        .view-doc-btn {
+            background: var(--light-blue);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Responsive Breakpoints */
+        @media(max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            header { flex-direction: column; gap: 15px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo-title">FINOR<span>A</span><offset>™</offset></div>
+            <div class="tagline">India's <span>Trusted</span> Compliance Partner</div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-outline hidden" id="logoutBtn" onclick="logoutCustomer()">Logout</button>
+            <button class="btn btn-admin" onclick="openAdminModal()"><i class="fa-solid fa-lock"></i> Admin Portal</button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <div id="authSection" class="auth-card">
+            <h2>Customer Access Portal</h2>
+            <div class="tab-system">
+                <div class="tab active" id="loginTab" onclick="switchAuthTab('login')">Login</div>
+                <div class="tab" id="registerTab" onclick="switchAuthTab('register')">Register</div>
+            </div>
+            
+            <form id="customerAuthForm" onsubmit="handleAuthSubmit(event)">
+                <div class="form-group">
+                    <label id="identityLabel">Mobile Number or Email ID</label>
+                    <input type="text" id="authIdentity" class="form-control" placeholder="Enter mobile or email address" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="authPassword" class="form-control" placeholder="••••••••" required oninput="validatePasswordStrength(this.value)">
+                    <div id="passwordFeedback" class="password-hint"></div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:14px;" id="authSubmitBtn">Proceed to Desktop</button>
+            </form>
+        </div>
+
+        <div id="dashboardSection" class="hidden">
+            <div class="client-info-bar">
+                <div>
+                    <h3 style="font-size:18px;">Welcome Partner</h3>
+                    <p style="font-size:12px; opacity:0.8;" id="displayIdentity">Client Acc: </p>
+                </div>
+                <div>
+                    <strong>Client ID:</strong> <span id="txtClientID" style="color:var(--amber);">FN-2026-X982</span>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 25px;">Select Required Compliance License</h2>
+            <div class="services-grid" id="servicesGrid">
+                </div>
+        </div>
+
+        <div id="formSection" class="hidden form-container-card">
+            <div class="form-header">
+                <div>
+                    <h2 id="formServiceTitle">Service Dynamic Form</h2>
+                    <p id="formServicePrice" style="font-weight: 600; color: var(--light-blue); margin-top:5px;"></p>
+                </div>
+                <button class="btn btn-outline" onclick="backToDashboard()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            </div>
+
+            <form id="complianceDataForm" onsubmit="handleComplianceFormSubmit(event)">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Contact Full Name</label>
+                        <input type="text" class="form-control" id="compName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" class="form-control" id="compEmail" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Corporate/Business Name</label>
+                    <input type="text" class="form-control" id="compBusinessName" required>
+                </div>
+
+                <hr style="border:0; border-top:1px solid var(--border-color); margin:30px 0;">
+                <h3 style="margin-bottom:20px; font-size:16px; color: var(--primary-blue);">Required Documents Upload Hierarchy</h3>
+                
+                <div id="dynamicDocumentFields" class="grid-2">
+                    </div>
+
+                <hr style="border:0; border-top:1px solid var(--border-color); margin:30px 0;">
+                <h3 style="margin-bottom:5px; font-size:16px; color: var(--primary-blue);">Live Capture Verification Engine</h3>
+                <p style="font-size:12px; color:#718096; margin-bottom:20px;">Mandatory verification protocols require live capture imaging of all directors/partners.</p>
+                
+                <div id="liveCaptureContainer" class="grid-2">
+                    </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%; padding: 15px; font-size:16px; margin-top:20px;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Securely Submit Application Files
+                </button>
+            </form>
+        </div>
+
+        <div id="adminPanelSection" class="hidden admin-panel">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                <div>
+                    <h2>Internal Administration Command Portal</h2>
+                    <p style="font-size:12px; color:#718096;">Tracking active user operations and document uploads</p>
+                </div>
+                <button class="btn btn-primary" onclick="exitAdminPanel()">Return to Frontend</button>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Client ID</th>
+                            <th>Company/Client Info</th>
+                            <th>License Track</th>
+                            <th>Attached Assets</th>
+                            <th>Biometrics</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="adminAuthModal" class="modal hidden">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="font-size:18px;">Admin Security Check</h3>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAdminModal()"></i>
+            </div>
+            <form onsubmit="handleAdminLogin(event)">
+                <div class="form-group">
+                    <label>Admin System ID</label>
+                    <input type="text" id="adminUID" class="form-control" required placeholder="FINORAKTH">
+                </div>
+                <div class="form-group">
+                    <label>Security Keyphrase</label>
+                    <input type="password" id="adminToken" class="form-control" required placeholder="••••••••">
+                </div>
+                <div id="adminAuthError" style="color:red; font-size:12px; margin-bottom:10px;" class="hidden">Invalid credentials entered. Access denied.</div>
+                <button type="submit" class="btn btn-admin" style="width:100%;">Verify Key Identity</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Database Configuration mapping parameters & pricing matrix
+        const serviceRegistry = {
+            company: { title: "Company Registration", price: "₹2999/- + Govt Fees", docs: ["Aadhaar Card", "PAN Card", "Address Proof", "Passport Photo"], staffCount: 2 },
+            trademark: { title: "Trade Mark Registration", price: "₹2000/- + Govt Fees", docs: ["Logo Image", "Authorization Form (TM-48)", "Identity Proof"], staffCount: 1 },
+            gst: { title: "GST Registration", price: "₹399/-", docs: ["Aadhaar Card", "Passport Size Photo", "Business Address Proof", "Residential Address Proof"], staffCount: 1 },
+            udyam: { title: "Udyam Registration", price: "₹299/-", docs: ["Aadhaar Card", "PAN Card Details"], staffCount: 1 },
+            itr: { title: "ITR Filing", price: "₹1100/-", docs: ["Form 16 / Salary Slips", "Bank Statement (1 Year)", "PAN Card"], staffCount: 1 },
+            fssai: { title: "FSSAI Registration", price: "₹799/- + Govt Fees", docs: ["Declaration Form", "Identity Proof", "Premises Proof"], staffCount: 1 },
+            gstr_both: { title: "GSTR 1 & 3B (Both Monthly Package)", price: "₹1000/- Per Month", docs: ["Sales Invoice Sheets", "Purchase Summary Documentation"], staffCount: 1 },
+            gstr1: { title: "GSTR 1 Filing Only", price: "₹600/-", docs: ["Sales Invoice Ledger"], staffCount: 1 },
+            gstr3b: { title: "GSTR 3B Filing Only", price: "₹600/-", docs: ["Purchase Invoices Summary", "Tax Payment Reciepts"], staffCount: 1 },
+            pan: { title: "Partnership PAN Card Registration", price: "₹245/-", docs: ["Partnership Deed Document", "Certificate of Registration", "Partner ID Proofs"], staffCount: 2 }
+        };
+
+        // In-memory Array simulating operational records persistence (Mock DB)
+        let simulatedDatabase = [
+            {
+                timestamp: "2026-06-04 14:22",
+                clientId: "FN-2026-K819",
+                name: "Rajesh Kumar",
+                email: "rajesh@alphaenterprises.in",
+                business: "Alpha Logistics LLP",
+                service: "GST Registration",
+                docs: ["Aadhaar.pdf", "Rent_Agreement.pdf"],
+                photos: 1
+            },
+            {
+                timestamp: "2026-06-04 16:45",
+                clientId: "FN-2026-P204",
+                name: "Priyanka Sharma",
+                email: "p.sharma@techroots.io",
+                business: "Techroots Development Private Limited",
+                service: "Company Registration",
+                docs: ["Director1_Aadhaar.png", "Director2_Aadhaar.png", "PAN_Card.pdf", "NOC_Premises.pdf"],
+                photos: 2
+            }
+        ];
+
+        let state = {
+            currentTab: 'login',
+            loggedInUser: null,
+            generatedClientID: '',
+            selectedServiceKey: null,
+            activeWebcamStreams: []
+        };
+
+        // Initialize view states
+        window.addEventListener('DOMContentLoaded', () => {
+            renderServicesGrid();
+        });
+
+        function switchAuthTab(target) {
+            state.currentTab = target;
+            document.getElementById('loginTab').classList.toggle('active', target === 'login');
+            document.getElementById('registerTab').classList.toggle('active', target === 'register');
+            document.getElementById('authSubmitBtn').innerText = target === 'login' ? 'Proceed to Desktop' : 'Create Account & Generate Client ID';
+            document.getElementById('passwordFeedback').innerHTML = '';
+        }
+
+        function validatePasswordStrength(password) {
+            if(state.currentTab === 'login') return;
+            const hint = document.getElementById('passwordFeedback');
+            if (password.length < 8) {
+                hint.innerHTML = "<span style='color:red;'>⚠️ Needs 8+ characters minimum</span>";
+                return false;
+            }
+            if (!/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+                hint.innerHTML = "<span style='color:orange;'>⚠️ Needs uppercase, number & symbol mix</span>";
+                return false;
+            }
+            hint.innerHTML = "<span style='color:var(--success);'>✔️ Passphrase Complexity verified Strong</span>";
+            return true;
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const identity = document.getElementById('authIdentity').value;
+            const pass = document.getElementById('authPassword').value;
+
+            if(state.currentTab === 'register' && !validatePasswordStrength(pass)) {
+                alert('Please strengthen your credentials based on parameters provided.');
+                return;
+            }
+
+            // Client ID logic sequence
+            state.loggedInUser = identity;
+            state.generatedClientID = 'FN-2026-' + Math.floor(100000 + Math.random() * 900000);
+            
+            document.getElementById('displayIdentity').innerText = "Logged in: " + identity;
+            document.getElementById('txtClientID').innerText = state.generatedClientID;
+
+            // Transition UI State
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+        }
+
+        function logoutCustomer() {
+            state.loggedInUser = null;
+            document.getElementById('authIdentity').value = '';
+            document.getElementById('authPassword').value = '';
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('formSection').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+            stopAllWebcams();
+        }
+
+        function renderServicesGrid() {
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = '';
+            Object.keys(serviceRegistry).forEach(key => {
+                const item = serviceRegistry[key];
+                grid.innerHTML += `
+                    <div class="service-card">
+                        <div>
+                            <h3>${item.title}</h3>
+                            <div class="price-tag">${item.price.split(' ')[0]} <span style="display:block; font-size:12px; color:#718096; margin-top:4px;">${item.price.replace(item.price.split(' ')[0], '')}</span></div>
+                        </div>
+                        <button class="btn btn-primary" style="width:100%;" onclick="openComplianceForm('${key}')">Apply Now</button>
+                    </div>
+                `;
+            });
+        }
+
+        function openComplianceForm(serviceKey) {
+            state.selectedServiceKey = serviceKey;
+            const item = serviceRegistry[serviceKey];
+            
+            document.getElementById('formServiceTitle').innerText = item.title;
+            document.getElementById('formServicePrice').innerText = "Pricing Structure: " + item.price;
+            
+            // Generate Dynamic Structural Document Upload Inputs
+            const docContainer = document.getElementById('dynamicDocumentFields');
+            docContainer.innerHTML = '';
+            item.docs.forEach((doc, idx) => {
+                docContainer.innerHTML += `
+                    <div class="form-group">
+                        <label>${doc} <span style="color:red">*</span></label>
+                        <input type="file" class="form-control" name="doc_${idx}" required onchange="this.style.borderColor='var(--success)'">
+                    </div>
+                `;
+            });
+
+            // Generate Functional Interactive Live Capture Hardware Interface Blocks
+            const captureContainer = document.getElementById('liveCaptureContainer');
+            captureContainer.innerHTML = '';
+            for(let i = 1; i <= item.staffCount; i++) {
+                const nameLabel = item.staffCount > 1 ? `Partner/Director #${i} Name` : `Applicant Legal Name`;
+                captureContainer.innerHTML += `
+                    <div class="camera-box">
+                        <label style="font-weight:700; font-size:12px; display:block; margin-bottom:10px;">${nameLabel}</label>
+                        <input type="text" class="form-control capture-name" placeholder="Enter Full Legal Name" required style="margin-bottom:10px;">
+                        
+                        <video id="video_${i}" class="video-preview" autoplay playsinline></video>
+                        <canvas id="canvas_${i}" class="hidden"></canvas>
+                        <img id="img_${i}" class="captured-image" />
+                        
+                        <div style="margin-top:10px; display:flex; gap:10px; justify-content:center;">
+                            <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="startWebcam(${i})"><i class="fa-solid fa-camera"></i> Start Cam</button>
+                            <button type="button" class="btn btn-primary" style="padding:6px 12px; font-size:12px; background-color:var(--light-blue);" onclick="captureSnapshot(${i})"><i class="fa-solid fa-circle"></i> Snapshot</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('formSection').classList.remove('hidden');
+        }
+
+        function backToDashboard() {
+            stopAllWebcams();
+            document.getElementById('formSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+        }
+
+        /* Video Capture Logic Processing Engines */
+        async function startWebcam(index) {
+            const video = document.getElementById(`video_${index}`);
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 }, audio: false });
+                video.srcObject = stream;
+                state.activeWebcamStreams.push(stream);
+            } catch (err) {
+                alert("Camera permission block or device absence. Please check system permissions.");
+                console.error(err);
+            }
+        }
+
+        function captureSnapshot(index) {
+            const video = document.getElementById(`video_${index}`);
+            const canvas = document.getElementById(`canvas_${index}`);
+            const img = document.getElementById(`img_${index}`);
+            
+            if(!video.srcObject) {
+                alert("Please click 'Start Cam' to initialize hardware feed before taking a snapshot.");
+                return;
+            }
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            img.src = dataUrl;
+            img.style.display = 'block';
+            video.style.display = 'none';
+        }
+
+        function stopAllWebcams() {
+            state.activeWebcamStreams.forEach(stream => {
+                stream.getTracks().forEach(track => track.stop());
+            });
+            state.activeWebcamStreams = [];
+        }
+
+        /* Operations Data Processing Form Formats */
+        function handleComplianceFormSubmit(e) {
+            e.preventDefault();
+            
+            // Validate snap captures are performed
+            const item = serviceRegistry[state.selectedServiceKey];
+            for(let i=1; i<=item.staffCount; i++) {
+                const img = document.getElementById(`img_${i}`);
+                if(!img || img.src === "" || img.style.display === 'none') {
+                    alert(`Biometric Alert: Live camera verification capture snapshot mandatory for user assignment position ${i}.`);
+                    return;
+                }
+            }
+
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+            // Push processing node structural configuration into core dynamic matrix
+            simulatedDatabase.unshift({
+                timestamp: dateStr,
+                clientId: state.generatedClientID,
+                name: document.getElementById('compName').value,
+                email: document.getElementById('compEmail').value,
+                business: document.getElementById('compBusinessName').value,
+                service: serviceRegistry[state.selectedServiceKey].title,
+                docs: Array.from(document.querySelectorAll('#dynamicDocumentFields input[type="file"]')).map(el => el.files[0] ? el.files[0].name : "attached_file.pdf"),
+                photos: item.staffCount
+            });
+
+            alert("Application data payload successfully submitted to admin portal routing queue.");
+            document.getElementById('complianceDataForm').reset();
+            backToDashboard();
+        }
+
+        /* Administration Subsystem Methods */
+        function openAdminModal() {
+            document.getElementById('adminAuthModal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminAuthModal').classList.add('hidden');
+            document.getElementById('adminAuthError').classList.add('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const uid = document.getElementById('adminUID').value;
+            const pass = document.getElementById('adminToken').value;
+
+            if(uid === "FINORAKTH" && pass === "FINORA@KTH") {
+                closeAdminModal();
+                renderAdminData();
+                // Mask operational view grids
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('dashboardSection').classList.add('hidden');
+                document.getElementById('formSection').classList.add('hidden');
+                document.getElementById('adminPanelSection').classList.remove('hidden');
+            } else {
+                document.getElementById('adminAuthError').classList.remove('hidden');
+            }
+        }
+
+        function exitAdminPanel() {
+            document.getElementById('adminPanelSection').classList.add('hidden');
+            if(state.loggedInUser) {
+                document.getElementById('dashboardSection').classList.remove('hidden');
+            } else {
+                document.getElementById('authSection').classList.remove('hidden');
+            }
+        }
+
+        function renderAdminData() {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+            simulatedDatabase.forEach(row => {
+                let docBadges = row.docs.map(d => `<button class="view-doc-btn" onclick="alert('System executing access decrypt payload download sequence for object item: ${d}')"><i class="fa-solid fa-file-arrow-down"></i> ${d.substring(0,12)}...</button>`).join(' ');
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="color:#718096; font-size:12px;">${row.timestamp}</td>
+                        <td style="font-weight:700; color:var(--primary-blue);">${row.clientId}</td>
+                        <td>
+                            <strong>${row.name}</strong><br>
+                            <span style="font-size:12px; color:#718096;">${row.email}</span><br>
+                            <span style="font-size:12px; font-style:italic;">Org: ${row.business}</span>
+                        </td>
+                        <td style="font-weight:600; font-size:13px;">${row.service}</td>
+                        <td><div style="display:flex; flex-direction:column; gap:4px;">${docBadges}</div></td>
+                        <td style="text-align:center;"><span class="badge" style="background:#DBEAFE; color:#1E40AF;"><i class="fa-solid fa-user-check"></i> ${row.photos} Snap Verification Verified</span></td>
+                        <td><span class="badge badge-success">Application Received</span></td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
