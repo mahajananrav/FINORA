@@ -9,7 +9,6 @@
     
     <style>
         :root {
-            --primary-blue: #004B93;
             --light-blue: #00A3E0;
             --amber: #FFB300;
             --dark-navy: #0A192F;
