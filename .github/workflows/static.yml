@@ -14,7 +14,7 @@
             --amber: #FFB300;
             --dark-navy: #0A192F;
             --gray-bg: #F4F7FA;
-            --white: #FFFFFF;
+            --white: #FFFFFF; 
             --border-color: #E2E8F0;
             --success: #2ECC71;
         }
